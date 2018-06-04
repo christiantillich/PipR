@@ -1,0 +1,14 @@
+Package: PipR
+Type: Package
+Title: A Data Preprocessing Tool
+Version: 0.0.0
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: The joke in data science is that we study all kinds of sophisticated
+statistics and modeling techniques just to spend 80% of our time shaping data
+to fit into the model. PipR tries to help with that. You create a yaml file 
+(a pipeline) with descriptions of the steps, data storage paths, transformation 
+function names,and other options. pipe() will run that data pipeline for you.
+check() will apply lists of QA functions against the sets specified by your 
+pipeline. 
+License: None.
+LazyData: TRUE

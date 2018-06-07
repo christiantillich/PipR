@@ -32,7 +32,7 @@ pipe <- function(path, only = NA, run_pipe = TRUE, run_checks = TRUE){
   
   if(run_checks == TRUE){
     out %<>% 
-      lapply(function(x){x$step <- which(x$description[[1]] == names(out)); x}) %>%
+      lapply(function(x){x$step <- which(sapply(out, function(y) identical(x,y))); x}) %>%
       bind_rows %>% 
       {.[,union(c('step','description','path'), colnames(.))]} %>%
       s3store(paste0(nice_dir(get_configs()$s3_dir), '/log'))
@@ -90,7 +90,7 @@ run_step <- function(transform, type, inpaths = "", outpaths = "", ...){
   }
   
   if(lcl$run_pipe){
-    message(paste0("Testing Step - ", lcl$description, "\n"))
+    message(paste0("Running Step - ", lcl$description, "\n"))
     switch(
        type
       ,'0f1' = map_0f1(func, outpaths, lcl$writer)

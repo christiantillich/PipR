@@ -199,7 +199,7 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
 #' @return Returns the outpaths
 map_MfM <- function(inpaths, outpaths, transform, reader, writer){
   dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
-  out <- lapply(transform, dfs)
+  out <- lapply(dfs, transform)
   mapply(writer, out, outpaths)
   return(outpaths)
 }

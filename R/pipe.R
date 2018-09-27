@@ -35,7 +35,7 @@ pipe <- function(path, only = NA, run_pipe = TRUE, run_checks = TRUE){
       lapply(function(x){x$step <- which(sapply(out, function(y) identical(x,y))); x}) %>%
       bind_rows %>% 
       {.[,union(c('step','description','path'), colnames(.))]} %>%
-      s3store(paste0(nice_dir(get_configs()$s3_dir), '/log'))
+      .PipR_Env$writer(paste0(nice_dir(get_configs()$s3_dir), '/log'))
   }
   
   remove_env()

@@ -1,6 +1,4 @@
----
-output: pdf_document
----
+
 # Objective
 
 To provide a tool that manages all transformations necessary to prepare a data set for use in some model development framework. PipR also performs an arbitrary number of tests at every step, and creates documentation useful for documentation or spotting inconsistencies/errors. 

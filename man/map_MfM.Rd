@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipe.R
 \name{map_MfM}
 \alias{map_MfM}
-\title{map_Mf1}
+\title{map_MfM}
 \usage{
 map_MfM(inpaths, outpaths, transform, reader, writer)
 }
@@ -21,5 +21,9 @@ paths, which each output set will be written to.}
 Returns the outpaths
 }
 \description{
-map_Mf1
+map_MfM
+}
+\details{
+MfM is simply a linear mapping between the input and output. MfM 
+is simply using `lapply` the transform against the input dataframes.
 }

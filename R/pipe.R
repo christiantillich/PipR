@@ -64,6 +64,10 @@ pipe <- function(path, only = NA, run_pipe = TRUE, run_checks = TRUE){
 #' 'MfM' - For functions with multiple inputs and multiple outputs. Input and 
 #' output sets must be the same length. Element one of the input set produces
 #' element one of the output set. 
+#' 'MbM' - for functions with multiple inputs and multiple outputs. Input and
+#' output sets may be of arbitrary length. Elements of the input set are fed into
+#' the transform via do.call, and the output sets must be returned in the order
+#' they are named in the pipeline. 
 #' @param inpaths character. A vector of one or more of the set names used as
 #' inputs to this step.
 #' @param outpaths character. A vector of one or more of the set names created
@@ -99,7 +103,8 @@ run_step <- function(transform, type, inpaths = "", outpaths = "", ...){
       ,'1fM' = map_1fM(inpaths, outpaths, func, lcl$reader, lcl$writer)
       ,'Mf1' = map_Mf1(inpaths, outpaths, func, lcl$reader, lcl$writer)
       ,'MfM' = map_MfM(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,stop("Step type must be specified as one of type 0f1, 0fM, 1f1, 1fM, Mf1, or MfM")
+      ,'MbM' = map_MbM(inpaths, outpaths, func, lcl$reader, lcl$writer)
+      ,stop("Step type must be specified as one of type 0f1, 0fM, 1f1, 1fM, Mf1, MfM, or MbM")
     )
   }
   
@@ -218,7 +223,7 @@ map_MfM <- function(inpaths, outpaths, transform, reader, writer){
 #' @param transform function. The transformation function to be applied.
 #' @param reader function. The function used to read the data set to the target location.
 #' @param writer function. The function used to write the data set to the target location.
-#' @return
+#' @return Returns the outpaths
 map_MbM <- function(inpaths, outpaths, transform, reader, writer){
   dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
   out <- do.call(transform, dfs)

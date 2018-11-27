@@ -174,7 +174,7 @@ map_1fM <- function(inpath, outpaths, transform, reader, writer){
 }
 
 #' map_Mf1
-#'
+#' 
 #' @param transform function. The transformation function to be applied.
 #' @param inpaths character. A character string representing multiple input
 #' paths. The raw data is read in from each path and stored as a list.
@@ -189,7 +189,8 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
 }
 
 #' map_MfM
-#'
+#' @details MfM is simply a linear mapping between the input and output. MfM 
+#' is simply using `lapply` the transform against the input dataframes. 
 #' @param transform function. The transformation function to be applied.
 #' @param inpaths character. A character string representing multiple input
 #' paths. The raw data is read in from each path and stored as a list.
@@ -200,6 +201,27 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
 map_MfM <- function(inpaths, outpaths, transform, reader, writer){
   dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
   out <- lapply(dfs, transform)
+  mapply(writer, out, outpaths)
+  return(outpaths)
+}
+
+
+#' map_MbM
+#' @details MbM (the "b" stands for blend) assumes the inputs will be combined
+#' in an arbitrary fashion by the transform. The input sets are fed to the 
+#' transform via `do.call`, and the user should ensure that the output sets
+#' are named in the order that the transform returns them. 
+#' @param inpaths character. A character string representing multiple input
+#' paths. The raw data is read in from each path and stored as a list.
+#' @param outpaths character. A character vector representing multiple output
+#' paths, which each output set will be written to.
+#' @param transform function. The transformation function to be applied.
+#' @param reader function. The function used to read the data set to the target location.
+#' @param writer function. The function used to write the data set to the target location.
+#' @return
+map_MbM <- function(inpaths, outpaths, transform, reader, writer){
+  dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
+  out <- do.call(transform, dfs)
   mapply(writer, out, outpaths)
   return(outpaths)
 }

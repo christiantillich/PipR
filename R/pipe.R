@@ -188,7 +188,7 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
   return(outpath)
 }
 
-#' map_Mf1
+#' map_MfM
 #'
 #' @param transform function. The transformation function to be applied.
 #' @param inpaths character. A character string representing multiple input

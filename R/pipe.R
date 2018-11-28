@@ -64,6 +64,10 @@ pipe <- function(path, only = NA, run_pipe = TRUE, run_checks = TRUE){
 #' 'MfM' - For functions with multiple inputs and multiple outputs. Input and 
 #' output sets must be the same length. Element one of the input set produces
 #' element one of the output set. 
+#' 'MbM' - for functions with multiple inputs and multiple outputs. Input and
+#' output sets may be of arbitrary length. Elements of the input set are fed into
+#' the transform via do.call, and the output sets must be returned in the order
+#' they are named in the pipeline. 
 #' @param inpaths character. A vector of one or more of the set names used as
 #' inputs to this step.
 #' @param outpaths character. A vector of one or more of the set names created
@@ -99,7 +103,8 @@ run_step <- function(transform, type, inpaths = "", outpaths = "", ...){
       ,'1fM' = map_1fM(inpaths, outpaths, func, lcl$reader, lcl$writer)
       ,'Mf1' = map_Mf1(inpaths, outpaths, func, lcl$reader, lcl$writer)
       ,'MfM' = map_MfM(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,stop("Step type must be specified as one of type 0f1, 0fM, 1f1, 1fM, Mf1, or MfM")
+      ,'MbM' = map_MbM(inpaths, outpaths, func, lcl$reader, lcl$writer)
+      ,stop("Step type must be specified as one of type 0f1, 0fM, 1f1, 1fM, Mf1, MfM, or MbM")
     )
   }
   
@@ -174,7 +179,7 @@ map_1fM <- function(inpath, outpaths, transform, reader, writer){
 }
 
 #' map_Mf1
-#'
+#' 
 #' @param transform function. The transformation function to be applied.
 #' @param inpaths character. A character string representing multiple input
 #' paths. The raw data is read in from each path and stored as a list.
@@ -188,8 +193,9 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
   return(outpath)
 }
 
-#' map_Mf1
-#'
+#' map_MfM
+#' @details MfM is simply a linear mapping between the input and output. MfM 
+#' is simply using `lapply` the transform against the input dataframes. 
 #' @param transform function. The transformation function to be applied.
 #' @param inpaths character. A character string representing multiple input
 #' paths. The raw data is read in from each path and stored as a list.
@@ -200,6 +206,27 @@ map_Mf1 <- function(inpaths, outpath, transform, reader, writer){
 map_MfM <- function(inpaths, outpaths, transform, reader, writer){
   dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
   out <- lapply(dfs, transform)
+  mapply(writer, out, outpaths)
+  return(outpaths)
+}
+
+
+#' map_MbM
+#' @details MbM (the "b" stands for blend) assumes the inputs will be combined
+#' in an arbitrary fashion by the transform. The input sets are fed to the 
+#' transform via `do.call`, and the user should ensure that the output sets
+#' are named in the order that the transform returns them. 
+#' @param inpaths character. A character string representing multiple input
+#' paths. The raw data is read in from each path and stored as a list.
+#' @param outpaths character. A character vector representing multiple output
+#' paths, which each output set will be written to.
+#' @param transform function. The transformation function to be applied.
+#' @param reader function. The function used to read the data set to the target location.
+#' @param writer function. The function used to write the data set to the target location.
+#' @return Returns the outpaths
+map_MbM <- function(inpaths, outpaths, transform, reader, writer){
+  dfs <- lapply(inpaths, reader) %T>% lapply(check_if_data)
+  out <- do.call(transform, dfs)
   mapply(writer, out, outpaths)
   return(outpaths)
 }

@@ -23,7 +23,11 @@ output set. Sets must be input in the order that they will be passed into the
 transformation function.
 'MfM' - For functions with multiple inputs and multiple outputs. Input and 
 output sets must be the same length. Element one of the input set produces
-element one of the output set.}
+element one of the output set. 
+'MbM' - for functions with multiple inputs and multiple outputs. Input and
+output sets may be of arbitrary length. Elements of the input set are fed into
+the transform via do.call, and the output sets must be returned in the order
+they are named in the pipeline.}
 
 \item{inpaths}{character. A vector of one or more of the set names used as
 inputs to this step.}

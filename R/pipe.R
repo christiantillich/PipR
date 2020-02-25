@@ -1,3 +1,6 @@
+#' Because data.table is a special snowflake
+.datatable.aware = TRUE
+
 #' pipe
 #' 
 #' The master function for PipR. Reads a yaml file and interprets it as 
@@ -35,7 +38,7 @@ pipe <- function(path, only = NA, run_pipe = TRUE, run_checks = TRUE){
       lapply(function(x){x$step <- which(sapply(out, function(y) identical(x,y))); x}) %>%
       bind_rows %>% 
       {.[,union(c('step','description','path'), colnames(.))]} %>%
-      .PipR_Env$writer(paste0(nice_dir(get_configs()$s3_dir), '/log'))
+      {get(.PipR_Env$writer)(., paste0(nice_dir(get_configs()$s3_dir), '/log'))}
   }
   
   remove_env()
@@ -97,13 +100,13 @@ run_step <- function(transform, type, inpaths = "", outpaths = "", ...){
     message(paste0("Running Step - ", lcl$description, "\n"))
     switch(
        type
-      ,'0f1' = map_0f1(func, outpaths, lcl$writer)
-      ,'0fM' = map_0fM(func, outpaths, lcl$writer)
-      ,'1f1' = map_1f1(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,'1fM' = map_1fM(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,'Mf1' = map_Mf1(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,'MfM' = map_MfM(inpaths, outpaths, func, lcl$reader, lcl$writer)
-      ,'MbM' = map_MbM(inpaths, outpaths, func, lcl$reader, lcl$writer)
+      ,'0f1' = map_0f1(func, outpaths, get(lcl$writer))
+      ,'0fM' = map_0fM(func, outpaths, get(lcl$writer))
+      ,'1f1' = map_1f1(inpaths, outpaths, func, get(lcl$reader), get(lcl$writer))
+      ,'1fM' = map_1fM(inpaths, outpaths, func, get(lcl$reader), get(lcl$writer))
+      ,'Mf1' = map_Mf1(inpaths, outpaths, func, get(lcl$reader), get(lcl$writer))
+      ,'MfM' = map_MfM(inpaths, outpaths, func, get(lcl$reader), get(lcl$writer))
+      ,'MbM' = map_MbM(inpaths, outpaths, func, get(lcl$reader), get(lcl$writer))
       ,stop("Step type must be specified as one of type 0f1, 0fM, 1f1, 1fM, Mf1, MfM, or MbM")
     )
   }

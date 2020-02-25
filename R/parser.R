@@ -22,8 +22,8 @@ parse_pipe <- function(path){
   
   make_env()
   list2env(as.list(pipeline$configs), envir = .PipR_Env)
-  .PipR_Env$reader <- get(pipeline$configs$reader, envir = .GlobalEnv)
-  .PipR_Env$writer <- get(pipeline$configs$writer, envir = .GlobalEnv)
+  .PipR_Env$reader <- pipeline$configs$reader #get(pipeline$configs$reader, envir = .GlobalEnv)
+  .PipR_Env$writer <- pipeline$configs$writer #get(pipeline$configs$writer, envir = .GlobalEnv)
   attach(.PipR_Env)
   
   nice_dir(get_configs()$local_dir) %>% 

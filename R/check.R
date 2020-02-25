@@ -14,7 +14,7 @@
 #'
 #' @return
 run_all_checks <- function(outpaths, checks, lcl) {
-  data_sets <- lapply(outpaths, function(x) lcl$reader(x)) %>% 
+  data_sets <- lapply(outpaths, function(x) get(lcl$reader)(x)) %>% 
     `names<-`(outpaths)
   
   lapply(outpaths, function(x) lapply(checks, function(y) run_check(data_sets[[x]],y,lcl,x))) %>%
